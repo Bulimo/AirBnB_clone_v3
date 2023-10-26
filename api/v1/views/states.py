@@ -10,7 +10,11 @@ from flask import jsonify, abort, request
 # Retrieves the list of all State objects: GET /api/v1/states
 @app_views.route('/states', methods=['GET'], strict_slashes=False)
 def get_states():
-    """This function retrieves a list of all State objects"""
+    """
+    This function retrieves a list of all State objects
+    it defines a GET request to endpoint /states
+    """
+    # retrieve all State objects
     states = storage.all(State)
     state_list = []
     for state in states.values():
@@ -20,7 +24,9 @@ def get_states():
 # Retrieves a State object: GET /api/v1/states/<state_id>
 @app_views.route('/states/<state_id>', methods=['GET'], strict_slashes=False)
 def get_state(state_id):
-    """This function retrieves a State object"""
+    """
+    This function retrieves a State object by its id
+    """
     state = storage.get(State, state_id)
     if state is None:
         abort(404)
@@ -36,6 +42,7 @@ def delete_state(state_id):
         abort(404)
     storage.delete(state)
     storage.save()
+    # it returns 200 ok meaning successfull deletion
     return jsonify({}), 200
 
 # Creates a State: POST /api/v1/states

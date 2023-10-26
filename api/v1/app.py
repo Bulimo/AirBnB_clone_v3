@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """ Module for app.py """
-from flask import Flask, Blueprint
+from flask import Flask, Blueprint, jsonify
 from models import storage
 from api.v1.views import app_views
 from os import getenv
@@ -21,6 +21,16 @@ app.register_blueprint(app_views)
 def teardown_appcontext(self):
     """ Method to handle teardown or when application closes"""
     storage.close()
+
+# declare a method to handle 404 errors
+@app.errorhandler(404)
+def page_not_found(error):
+    """
+    Method to handle 404 error
+    output: response, status code 404
+    """
+    # without 404 status code will be default 200 0k
+    return jsonify({"error": "Not found"}), 404
 
 
 if __name__ == "__main__":

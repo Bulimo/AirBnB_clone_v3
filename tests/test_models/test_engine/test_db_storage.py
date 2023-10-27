@@ -140,7 +140,7 @@ class TestDBStorage(unittest.TestCase):
         # Confirm the results
         self.assertTrue(len(new_objs) > len(init_objs))
 
-    def test_get_method(self):
+    def test_count_method(self):
         """ Test method_to get count """
         # initialize sqlalchemy connection
         storage.reload()
@@ -155,3 +155,20 @@ class TestDBStorage(unittest.TestCase):
 
         # Confirm the results
         self.assertEqual(len(init_objs), count)
+
+    def test_get_method(self):
+        """ Test method_to get created object """
+        # initialize sqlalchemy connection
+        storage.reload()
+
+        # create a user object
+        user = User(email='jdoe@mail.com', password='1234',
+                    first_name='John', last_name='Doe')
+        storage.new(user)
+        storage.save()
+
+        # get the created object
+        stored_user = storage.get(User, user.id)
+
+        # Confirm the results
+        self.assertEqual(user, stored_user)

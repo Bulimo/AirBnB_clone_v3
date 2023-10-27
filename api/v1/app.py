@@ -22,6 +22,7 @@ def teardown_appcontext(self):
     """ Method to handle teardown or when application closes"""
     storage.close()
 
+
 # declare a method to handle 404 errors
 @app.errorhandler(404)
 def page_not_found(error):
@@ -36,7 +37,7 @@ def page_not_found(error):
 if __name__ == "__main__":
     """ run flask sever with defaults 5000 and 0.0.0.0 """
     host = getenv('HBNB_API_HOST', '0.0.0.0')
-    port = getenv('HBNB_API_PORT', '5000')
+    port = int(getenv('HBNB_API_PORT', '5000'))
     # run the flask application
     # set threaded to be true so that it can serve multiple clients
     app.run(host=host, port=port, threaded=True)

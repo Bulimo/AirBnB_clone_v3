@@ -11,7 +11,7 @@ from flask import jsonify, abort, request
 
 # Retrieves the list of all Amenity objects: GET /api/v1/amenities
 @app_views.route('/amenities', methods=['GET'], strict_slashes=False)
-def get_amenities(state_id):
+def get_amenities():
     """This function retrieves the list of all amenity objects of a State"""
     amenities = storage.all(Amenity)
     amenities_list = []
@@ -68,6 +68,7 @@ def update_amenity(amenity_id):
         abort(400, description="Not a JSON")
     data = request.get_json()
     for key, value in data.items():
+        # Ignore keys: id, created_at and updated_at
         if key not in ['id', 'created_at', 'updated_at']:
             setattr(amenity, key, value)
     storage.save()

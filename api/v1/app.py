@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 """ Module for app.py """
 from flask import Flask, Blueprint, jsonify
+from flask_cors import CORS
 from models import storage
 from api.v1.views import app_views
 from os import getenv
@@ -8,7 +9,7 @@ from os import getenv
 
 # create a variable app, instance of Flask
 app = Flask(__name__)
-
+CORS(app, origins="0.0.0.0")  # enable CORS on the API_v1 blue print
 # set strict_slashes to False for all routes
 app.url_map.strict_slashes = False
 

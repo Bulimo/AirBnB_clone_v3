@@ -77,14 +77,7 @@ class TestDBStorage(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         """Set up for the class for tests"""
-        cls.my_storage = DBStorage()
         cls.command = HBNBCommand()
-
-    @classmethod
-    def tearDownClass(cls):
-        """ Tear down the test environment
-        """
-        del cls.my_storage
 
     def setUp(self):
         """ create a MySQLdb connection """

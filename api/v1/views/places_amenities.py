@@ -16,7 +16,7 @@ from models import storage_t
 # Retrieves the list of all Amenity objects of a Place
 @app_views.route('/places/<place_id>/amenities', methods=['GET'],
                  strict_slashes=False)
-def get_amenities(place_id):
+def get_place_amenities(place_id):
     """Retrieves the list of all Amenity objects of a Place"""
     place = storage.get(Place, place_id)
     if place is None:
@@ -35,7 +35,7 @@ def get_amenities(place_id):
 # delete a Amenity object to a Place
 @app_views.route('/places/<place_id>/amenities/<amenity_id>',
                  methods=['DELETE'], strict_slashes=False)
-def delete_amenity(place_id, amenity_id):
+def delete_place_amenity(place_id, amenity_id):
     """delete a Amenity object to a Place"""
     place = storage.get(Place, place_id)
     if place is None:
@@ -59,7 +59,7 @@ def delete_amenity(place_id, amenity_id):
 # Link a Amenity object to a Place
 @app_views.route('/places/<place_id>/amenities/<amenity_id>',
                  methods=['POST'], strict_slashes=False)
-def link_amenity(place_id, amenity_id):
+def link_place_amenity(place_id, amenity_id):
     """Link a Amenity object to a Place"""
     place = storage.get(Place, place_id)
     if place is None:

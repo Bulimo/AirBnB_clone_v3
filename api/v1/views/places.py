@@ -20,7 +20,8 @@ def get_places(city_id):
     if city is None:
         abort(404)
     places = [place.to_dict() for place in city.places]
-    return jsonify(places)
+    return jsonify(places), 200
+
 
 # Retrieves a Place object: /api/v1/places/<place_id>
 @app_views.route('/places/<place_id>', methods=['GET'], strict_slashes=False)
@@ -29,7 +30,8 @@ def get_place(place_id):
     place = storage.get(Place, place_id)
     if place is None:
         abort(404)
-    return jsonify(place.to_dict())
+    return jsonify(place.to_dict()), 200
+
 
 # Deletes a Place object: /api/v1/places/<place_id>
 @app_views.route('/places/<place_id>', methods=['DELETE'],
@@ -42,6 +44,7 @@ def delete_place(place_id):
     storage.delete(place)
     storage.save()
     return jsonify({}), 200
+
 
 # Creates a Place: /api/v1/cities/<city_id>/places
 @app_views.route('/cities/<city_id>/places', methods=['POST'],
@@ -64,6 +67,7 @@ def create_place(city_id):
     place.city_id = city_id
     place.save()
     return jsonify(place.to_dict()), 201
+
 
 # Updates a Place object: /api/v1/places/<place_id>
 @app_views.route('/places/<place_id>', methods=['PUT'], strict_slashes=False)

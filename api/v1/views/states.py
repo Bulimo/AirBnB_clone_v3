@@ -19,7 +19,8 @@ def get_states():
     state_list = []
     for state in states.values():
         state_list.append(state.to_dict())
-    return jsonify(state_list)
+    return jsonify(state_list), 200
+
 
 # Retrieves a State object: GET /api/v1/states/<state_id>
 @app_views.route('/states/<state_id>', methods=['GET'], strict_slashes=False)
@@ -30,7 +31,8 @@ def get_state(state_id):
     state = storage.get(State, state_id)
     if state is None:
         abort(404)
-    return jsonify(state.to_dict())
+    return jsonify(state.to_dict()), 200
+
 
 # Deletes a State object: DELETE /api/v1/states/<state_id>
 @app_views.route('/states/<state_id>', methods=['DELETE'],
@@ -45,6 +47,7 @@ def delete_state(state_id):
     # it returns 200 ok meaning successfull deletion
     return jsonify({}), 200
 
+
 # Creates a State: POST /api/v1/states
 @app_views.route('/states', methods=['POST'], strict_slashes=False)
 def create_state():
@@ -58,6 +61,7 @@ def create_state():
     storage.new(state)  # adds the newly created state
     storage.save()
     return jsonify(state.to_dict()), 201
+
 
 # Updates a State object: PUT /api/v1/states/<state_id>
 @app_views.route('/states/<state_id>', methods=['PUT'], strict_slashes=False)

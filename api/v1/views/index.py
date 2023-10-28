@@ -21,6 +21,7 @@ def status():
     # jsonify function converts a python dict to JSON string
     return jsonify({"status": "OK"})
 
+
 # create a route /stats on the object app_views that returns a JSON stats
 # response
 @app_views.route('/stats', strict_slashes=False)
@@ -31,4 +32,4 @@ def stats():
                     "places": models.storage.count(Place),
                     "reviews": models.storage.count(Review),
                     "states": models.storage.count(State),
-                    "users": models.storage.count(User)})
+                    "users": models.storage.count(User)}), 200

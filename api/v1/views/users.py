@@ -22,7 +22,8 @@ def get_users():
     user_list = []
     for user in users.values():
         user_list.append(user.to_dict())
-    return jsonify(user_list)
+    return jsonify(user_list), 200
+
 
 # Retrieves a User object: GET /api/v1/users/<user_id>
 @app_views.route('/users/<user_id>', methods=['GET'], strict_slashes=False)
@@ -33,7 +34,8 @@ def get_user(user_id):
     user = storage.get(User, user_id)
     if user is None:
         abort(404)
-    return jsonify(user.to_dict())
+    return jsonify(user.to_dict()), 200
+
 
 # Deletes a User object: DELETE /api/v1/users/<user_id>
 @app_views.route('/users/<user_id>', methods=['DELETE'],
@@ -47,6 +49,7 @@ def delete_user(user_id):
     storage.save()
     # it returns 200 ok meaning successfull deletion
     return jsonify({}), 200
+
 
 # Creates a User: POST /api/v1/users
 @app_views.route('/users', methods=['POST'], strict_slashes=False)
@@ -63,6 +66,7 @@ def create_user():
     storage.new(user)
     storage.save()
     return jsonify(user.to_dict()), 201
+
 
 # Updates a User object: PUT /api/v1/users/<user_id>
 @app_views.route('/users/<user_id>', methods=['PUT'],

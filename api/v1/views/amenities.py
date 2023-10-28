@@ -17,7 +17,8 @@ def get_amenities():
     amenities_list = []
     for amenity in amenities.values():
         amenities_list.append(amenity.to_dict())
-    return jsonify(amenities_list)
+    return jsonify(amenities_list), 200
+
 
 # Retrieves a Amenity object. : GET /api/v1/amenities/<amenity_id>
 @app_views.route('/amenities/<amenity_id>', methods=['GET'],
@@ -27,7 +28,8 @@ def get_amenity(amenity_id):
     amenity = storage.get(Amenity, amenity_id)
     if amenity is None:
         abort(404)
-    return jsonify(amenity.to_dict())
+    return jsonify(amenity.to_dict()), 200
+
 
 # Deletes a Amenity object: DELETE /api/v1/amenities/<amenity_id>
 @app_views.route('/amenities/<amenity_id>', methods=['DELETE'],
@@ -40,6 +42,7 @@ def delete_amenity(amenity_id):
     storage.delete(amenity)
     storage.save()
     return jsonify({}), 200
+
 
 # Creates a Amenity: POST /api/v1/amenities
 @app_views.route('/amenities', methods=['POST'], strict_slashes=False)
@@ -55,6 +58,7 @@ def create_amenity():
     storage.new(new_amenity)
     storage.save()
     return jsonify(new_amenity.to_dict()), 201
+
 
 # Updates a Amenity object: PUT /api/v1/amenities/<amenity_id>
 @app_views.route('/amenities/<amenity_id>', methods=['PUT'],

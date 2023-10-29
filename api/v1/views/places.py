@@ -96,18 +96,16 @@ def places_search():
 
     # If the JSON body is empty or each list of all keys are empty:
     # return all Place objects
-    if len(search_request) == 0 or (len(search_request.get('cities')) == 0 and
-                                    len(search_request.get('states')) == 0 and
-                                    len(search_request.get('amenities')) == 0):
+    if not any(search_request.values()):
         places = []
         for place in storage.all(Place):
             places.append(place.to_dict())
         return jsonify(places), 200
 
     search_results = []  # store the results of search
-    states = search_request.get('states')  # state_ids in request JSON
-    cities = search_request.get('cities')  # city_ids in request JSON
-    amenities = search_request.get('amenities')  # amenity_ids of request JSON
+    states = search_request.get('states', [])  # state_ids in request JSON
+    cities = search_request.get('cities', [])  # city_ids in request JSON
+    amenities = search_request.get('amenities', [])  # amenity_ids in JSON
     all_places = []  # all places generated from State and City
     all_cities = []  # all cities generated from State and City
     # results should include all Place objects for each State id listed
@@ -115,54 +113,40 @@ def places_search():
         for state_id in states:
             state = storage.get(State, state_id)
             if state:
-                state_cities = []
                 if storage_t == 'db':
-                    state_cities = state.cities
+                    all_cities.extend(state.cities)
                 else:
-                    state_cities = state.cities()
-                for city in state_cities:
-                    all_cities.append(city)
+                    all_cities.extend(state.cities())
 
     # results should include all Place objects for each City id listed
-    if cities:
-        for city_id in cities:
-            city = storage.get(City, city_id)
-            if city and city not in all_cities:
-                all_cities.append(city)
+    for city_id in cities:
+        city = storage.get(City, city_id)
+        if city and city not in all_cities:
+            all_cities.append(city)
 
     # get all the places for the cities
-    if all_cities:
-        if storage_t == 'db':
-            for city in all_cities:
-                places = city.places
-                for place in places:
-                    all_places.append(place)
-        else:
-            city_ids = [city.id for city in all_cities]
-            places = storage.all(Place)
-            for place in places:
-                if places.city_id in city_ids:
-                    all_places.append(place)
+    if storage_t == 'db':
+        for city in all_cities:
+            # for city in all_cities:
+            #     places = city.places
+            #     for place in places:
+            all_places.extend(city.places)
+    else:
+        city_ids = [city.id for city in all_cities]
+        places = storage.all(Place)
+        for place in places:
+            if places.city_id in city_ids:
+                all_places.append(place)
 
     # limit search results to only Place objects having all Amenity ids listed
     if amenities:
         for place in all_places:
             place_amenities = []    # store amenities in a place
-            add = True
             if storage_t == 'db':
-                place_amenities = place.amenities
+                place_amenities.extend(place.amenities)
             else:
-                place_amenities = place.amenities()
-            for amenity_id in amenities:
-                amenity = storage.get(Amenity, amenity_id)
-                if not amenity:
-                    continue
-                if amenity not in place_amenities:
-                    add = False
-                    break
-                else:
-                    add = True
-            if add:
+                place_amenities.extend(place.amenities())
+            if all(amenity in place_amenities for amenity in amenities):
                 search_results.append(place.to_dict())
     else:
         for place in all_places:

@@ -98,7 +98,7 @@ def places_search():
     # return all Place objects
     if not any(search_request.values()):
         places = []
-        for place in storage.all(Place):
+        for place in storage.all(Place).values():
             places.append(place.to_dict())
         return jsonify(places), 200
 
@@ -108,6 +108,7 @@ def places_search():
     amenities = search_request.get('amenities', [])  # amenity_ids in JSON
     all_places = []  # all places generated from State and City
     all_cities = []  # all cities generated from State and City
+
     # results should include all Place objects for each State id listed
     if states:
         for state_id in states:
@@ -119,24 +120,24 @@ def places_search():
                     all_cities.extend(state.cities())
 
     # results should include all Place objects for each City id listed
-    for city_id in cities:
-        city = storage.get(City, city_id)
-        if city and city not in all_cities:
-            all_cities.append(city)
+    if cities:
+        for city_id in cities:
+            city = storage.get(City, city_id)
+            if city and city not in all_cities:
+                all_cities.append(city)
 
     # get all the places for the cities
-    if storage_t == 'db':
-        for city in all_cities:
-            # for city in all_cities:
-            #     places = city.places
-            #     for place in places:
-            all_places.extend(city.places)
-    else:
-        city_ids = [city.id for city in all_cities]
-        places = storage.all(Place)
-        for place in places:
-            if places.city_id in city_ids:
-                all_places.append(place)
+    # if storage_t == 'db':
+    #     for city in all_cities:
+    #         # for city in all_cities:
+    #         #     places = city.places
+    #         #     for place in places:
+    #         all_places.extend(city.places)
+    # else:
+    city_ids = [city.id for city in all_cities]
+    for place in storage.all(Place).values():
+        if place.city_id in city_ids:
+            all_places.append(place)
 
     # limit search results to only Place objects having all Amenity ids listed
     if amenities:

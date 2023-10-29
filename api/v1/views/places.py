@@ -91,12 +91,12 @@ def update_place(place_id):
 def places_search():
     """retrieves all Place objects depending on search request"""
     search_request = request.get_json()
-    if not search_request:
-        abort(400, description="Not a JSON")
+    if not search_request or not isinstance(search_request, dict):
+        return jsonify({'error': "Not a JSON"}), 400
 
     # If the JSON body is empty or each list of all keys are empty:
     # return all Place objects
-    if not any(search_request.values()):
+    if not search_request or not any(search_request.values()):
         places = []
         for place in storage.all(Place).values():
             places.append(place.to_dict())
@@ -126,14 +126,6 @@ def places_search():
             if city and city not in all_cities:
                 all_cities.append(city)
 
-    # get all the places for the cities
-    # if storage_t == 'db':
-    #     for city in all_cities:
-    #         # for city in all_cities:
-    #         #     places = city.places
-    #         #     for place in places:
-    #         all_places.extend(city.places)
-    # else:
     city_ids = [city.id for city in all_cities]
     for place in storage.all(Place).values():
         if place.city_id in city_ids:
